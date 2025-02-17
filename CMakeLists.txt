@@ -11,7 +11,7 @@ file(COPY themes DESTINATION .)
 
 set(CURSES_NEED_WIDE TRUE)
 find_package(Curses REQUIRED)
-include_directories("$(CURSES_INCLUDE_DIR)")
+include_directories(${CURSES_INCLUDE_DIRS})
 
 include_directories(${CMAKE_BINARY_DIR}/src src)
 
