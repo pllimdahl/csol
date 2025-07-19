@@ -40,12 +40,75 @@ void ui_message(const char *format, ...) {
 }
 
 int ui_confirm(const char *message) {
-  ui_message("%s (y/N)", message);
-  switch (getch()) {
-    case 'y': case 'Y':
-      return 1;
-    default:
-      return 0;
+  MEVENT mouse;
+  int yes = 1;
+  size_t width = strlen(message) + 10;
+  ui_box(1, 1, 5, width, 1);
+  mvprintw(2, 3, "%s (Y/n)", message);
+  while (1) {
+    move(4, width - 11);
+    if (!yes) {
+      attron(A_REVERSE);
+    }
+    printw("[");
+    attron(A_BOLD);
+    printw("N");
+    attroff(A_BOLD);
+    printw("o]");
+    if (!yes) {
+      attroff(A_REVERSE);
+    }
+    printw(" ");
+    if (yes) {
+      attron(A_REVERSE);
+    }
+    printw("[");
+    attron(A_BOLD);
+    printw("Y");
+    attroff(A_BOLD);
+    printw("es]");
+    if (yes) {
+      attroff(A_REVERSE);
+    }
+    switch (getch()) {
+      case KEY_LEFT:
+        yes = 0;
+        break;
+      case KEY_RIGHT:
+        yes = 1;
+        break;
+      case 'y': case 'Y':
+        return 1;
+      case 27:
+      case 'n': case 'N':
+        return 0;
+      case 10: /* enter */
+      case 13: /* enter */
+      case ' ':
+        return yes;
+      case KEY_MOUSE:
+        if (
+#ifdef PDCURSES
+            nc_getmouse(&mouse)
+#else
+            getmouse(&mouse)
+#endif
+            == OK) {
+          if (mouse.bstate & BUTTON1_CLICKED) {
+            if (mouse.y == 4) {
+              if (mouse.x >= width - 11 && mouse.x <= width - 7) {
+                return 0;
+              } else if (mouse.x >= width - 5 && mouse.x <= width - 1) {
+                return 1;
+              }
+            }
+            break;
+          }
+        }
+        break;
+      default:
+        break;
+    }
   }
 }
 
@@ -349,6 +412,7 @@ int ui_menubar(Menu *menu, Menu **menu_selection, void **data, MenuClick *click)
           break;
         case 10: /* enter */
         case 13: /* enter */
+        case ' ':
           if (menu_selection[1]) {
             int action = menu_selection[1]->action;
             *data = menu_selection[1]->data;
