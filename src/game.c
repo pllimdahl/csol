@@ -623,17 +623,19 @@ int redeal(Pile *stock, Pile *piles) {
     Pile *src;
     stock->redeals++;
     for (src = piles; src; src = src->next) {
-      if (src->rule->type == RULE_WASTE) {
-        Card *src_card;
-        record_redeal(stock, src);
-        src_card = get_top(src->stack);
-        while (!(src_card->suit & BOTTOM)) {
-          Card *prev = src_card->prev;
-          move_stack(stock->stack, src_card);
-          src_card = prev;
+      if (src->rule->type == RULE_WASTE || (stock->rule->to == RULE_FOUNDATION && src->rule->type == RULE_FOUNDATION)) {
+        Card *src_card = get_top(src->stack);
+        if (!(src_card->suit & BOTTOM)) {
+          record_redeal(stock, src);
+          while (!(src_card->suit & BOTTOM)) {
+            Card *prev = src_card->prev;
+            src_card->up = 0;
+            move_stack(stock->stack, src_card);
+            src_card = prev;
+          }
+          game_score -= 50;
+          return 1;
         }
-        game_score -= 50;
-        return 1;
       }
     }
   }
