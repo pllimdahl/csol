@@ -1,0 +1,40 @@
+theme {
+  name light
+  title "Default theme with light color palette"
+  heart   ♥
+  spade   ♠
+  diamond ♦
+  club    ♣
+  width 8
+  height 6
+  bg white
+  fg black
+  empty {
+    top    ┌──────┐
+    middle │      │
+    bottom └──────┘
+    fg white
+    bg black
+  }
+  back {
+    top    ┌──────┐
+    middle │      │
+    bottom └──────┘
+    fg white
+    bg blue
+  }
+  red {
+    top    ┌──────┐
+    middle │      │
+    bottom └──────┘
+    fg red
+    bg white
+  }
+  black {
+    top    ┌──────┐
+    middle │      │
+    bottom └──────┘
+    fg black
+    bg white
+  }
+}
