@@ -4,6 +4,7 @@ game {
   foundation {
     class 1
     x 1
+    first_rank any
     deal 1
     next_suit any
     next_rank any
@@ -27,7 +28,13 @@ game {
   }
   stock {
     deal 52
+    redeal 1
     to foundation
   }
+  waste {
+    x 10
+    from stock
+  }
 }
+
 
